@@ -19,10 +19,7 @@
 ---
 
 ### 🌐 Live Demo
-**Coming Soon**
-
-### 📂 Repository
-**https://github.com/TECH-SUGATA/YOUR_REPOSITORY**
+https://tech-sugata.github.io/IIT-Techfest-Bombay-Campus-Ambassador-task-3-/
 
 ---
 
