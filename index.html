@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VISIONARY - Mobile Parallax</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#464555",
+                        "surface-container": "#1f1f28",
+                        "tertiary-fixed": "#ffdcc6",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-highest": "#35343e",
+                        "secondary": "#d0bcff",
+                        "primary-fixed": "#e3dfff",
+                        "surface-container-high": "#2a2933",
+                        "on-tertiary-container": "#461f00",
+                        "surface-container-low": "#1b1b24",
+                        "on-surface": "#e4e1ee",
+                        "on-primary-container": "#1b0091",
+                        "on-primary-fixed-variant": "#3622ca",
+                        "error": "#ffb4ab",
+                        "on-secondary": "#3c0091",
+                        "on-tertiary-fixed-variant": "#713700",
+                        "background": "#13121b",
+                        "secondary-fixed-dim": "#d0bcff",
+                        "surface-dim": "#13121b",
+                        "primary-fixed-dim": "#c4c0ff",
+                        "on-error": "#690005",
+                        "on-tertiary-fixed": "#301400",
+                        "tertiary": "#ffb785",
+                        "on-tertiary": "#502500",
+                        "outline": "#918fa1",
+                        "inverse-on-surface": "#302f39",
+                        "secondary-container": "#571bc1",
+                        "inverse-primary": "#4f44e2",
+                        "tertiary-container": "#db761f",
+                        "surface-bright": "#393842",
+                        "on-surface-variant": "#c7c4d8",
+                        "tertiary-fixed-dim": "#ffb785",
+                        "primary": "#c4c0ff",
+                        "on-primary-fixed": "#100069",
+                        "on-background": "#e4e1ee",
+                        "on-secondary-container": "#c4abff",
+                        "error-container": "#93000a",
+                        "on-primary": "#2000a4",
+                        "surface-container-lowest": "#0e0d16",
+                        "surface-variant": "#35343e",
+                        "surface": "#13121b",
+                        "inverse-surface": "#e4e1ee",
+                        "secondary-fixed": "#e9ddff",
+                        "on-secondary-fixed": "#23005c",
+                        "primary-container": "#8781ff",
+                        "surface-tint": "#c4c0ff",
+                        "on-secondary-fixed-variant": "#5516be"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "32px",
+                        "container-max": "1440px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "margin-mobile": "20px",
+                        "section-gap": "160px",
+                        "margin-desktop": "80px",
+                        "stack-lg": "32px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Space Grotesk"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Space Grotesk"],
+                        "display-lg-mobile": ["Space Grotesk"],
+                        "label-md": ["Inter"],
+                        "display-lg": ["Space Grotesk"],
+                        "display-xl": ["Space Grotesk"],
+                        "headline-lg": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "160%", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "120%", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "160%", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "130%", "fontWeight": "600" }],
+                        "display-lg-mobile": ["48px", { "lineHeight": "110%", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "100%", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-lg": ["80px", { "lineHeight": "110%", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-xl": ["120px", { "lineHeight": "110%", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "headline-lg": ["48px", { "lineHeight": "120%", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        :root {
+            --scroll-y: 0px;
+        }
+        body { background-color: #050816; overflow-x: hidden; min-height: max(884px, 100dvh); }
+        
+        /* Polished Glassmorphism */
+        .glass-panel {
+            background: rgba(19, 18, 27, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            position: relative;
+            background-clip: padding-box;
+            border: 1px solid transparent;
+        }
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.02) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        /* Parallax Engine Core */
+        .parallax-layer {
+            transform: translateY(calc(var(--scroll-y) * var(--parallax-speed, 0)));
+            will-change: transform;
+        }
+
+        .aurora-bg {
+            background: radial-gradient(circle at 50% 50%, rgba(108, 99, 255, 0.15) 0%, rgba(5, 8, 22, 0) 50%),
+                        radial-gradient(circle at 80% 20%, rgba(0, 229, 255, 0.1) 0%, rgba(5, 8, 22, 0) 40%);
+        }
+
+        .floating-sphere {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.6;
+            pointer-events: none;
+            will-change: transform;
+        }
+
+        /* Entrance Animations */
+        .animate-in-hidden {
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .animate-in-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* Reveal variants for richer scroll storytelling */
+        .reveal-left { opacity: 0; transform: translateX(-40px); transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1); }
+        .reveal-right { opacity: 0; transform: translateX(40px); transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1); }
+        .reveal-blur { opacity: 0; filter: blur(12px); transform: scale(0.97); transition: opacity 1s ease, filter 1s ease, transform 1s ease; }
+        .reveal-visible { opacity: 1 !important; transform: translateX(0) translateY(0) scale(1) !important; filter: blur(0) !important; }
+
+        /* Smooth scrolling, respecting motion preference */
+        html { scroll-behavior: smooth; }
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            .animate-in-hidden, .reveal-left, .reveal-right, .reveal-blur { opacity: 1 !important; transform: none !important; filter: none !important; transition: none !important; }
+            .parallax-layer { transform: none !important; }
+        }
+
+        /* Scroll progress bar */
+        #scroll-progress {
+            position: fixed;
+            top: 0; left: 0;
+            height: 3px;
+            width: 0%;
+            background: linear-gradient(90deg, #c4c0ff, #d0bcff, #ffb785);
+            z-index: 60;
+            box-shadow: 0 0 12px rgba(196,192,255,0.6);
+            transition: width 0.05s linear;
+        }
+
+        /* Nav link underline + active state */
+        .nav-link {
+            position: relative;
+            color: var(--tw-text-opacity, inherit);
+            padding-bottom: 6px;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 0; bottom: 0;
+            width: 0%;
+            height: 2px;
+            border-radius: 9999px;
+            background: linear-gradient(90deg, #c4c0ff, #ffb785);
+            transition: width 0.35s cubic-bezier(0.16,1,0.3,1);
+        }
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+        .nav-link.active {
+            color: #c4c0ff;
+        }
+
+        /* Mobile drawer */
+        #mobile-drawer {
+            position: fixed;
+            inset: 0;
+            z-index: 55;
+            pointer-events: none;
+        }
+        #mobile-drawer .drawer-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(5,8,22,0.6);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        #mobile-drawer .drawer-panel {
+            position: absolute;
+            top: 0; right: 0;
+            height: 100%;
+            width: min(78vw, 340px);
+            background: rgba(19,18,27,0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255,255,255,0.08);
+            transform: translateX(100%);
+            transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+            display: flex;
+            flex-direction: column;
+            padding: 96px 32px 32px;
+            gap: 28px;
+        }
+        #mobile-drawer.open { pointer-events: auto; }
+        #mobile-drawer.open .drawer-backdrop { opacity: 1; }
+        #mobile-drawer.open .drawer-panel { transform: translateX(0); }
+
+        /* Animated hamburger */
+        .hamburger { width: 24px; height: 18px; position: relative; }
+        .hamburger span {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: currentColor;
+            border-radius: 2px;
+            transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.3s ease, top 0.35s ease;
+        }
+        .hamburger span:nth-child(1) { top: 0; }
+        .hamburger span:nth-child(2) { top: 8px; }
+        .hamburger span:nth-child(3) { top: 16px; }
+        .hamburger.is-open span:nth-child(1) { top: 8px; transform: rotate(45deg); }
+        .hamburger.is-open span:nth-child(2) { opacity: 0; }
+        .hamburger.is-open span:nth-child(3) { top: 8px; transform: rotate(-45deg); }
+
+        /* Section divider SVGs sit between sections to remove hard seams */
+        .section-divider { display: block; width: 100%; height: 64px; position: relative; z-index: 15; margin-top: -1px; pointer-events: none; }
+        .section-divider svg { width: 100%; height: 100%; display: block; }
+
+        /* Magnetic / lift micro-interactions */
+        .magnetic-btn { transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s ease; }
+        .lift-card { transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease, border-color 0.4s ease; }
+        .lift-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px -20px rgba(196,192,255,0.25); }
+
+        /* Ripple effect */
+        .ripple { position: relative; overflow: hidden; }
+        .ripple-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.45);
+            transform: scale(0);
+            animation: ripple-anim 0.7s ease-out;
+            pointer-events: none;
+        }
+        @keyframes ripple-anim {
+            to { transform: scale(3); opacity: 0; }
+        }
+
+        /* Drifting particles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(196,192,255,0.9), rgba(196,192,255,0));
+            pointer-events: none;
+            animation: drift ease-in-out infinite;
+        }
+        @keyframes drift {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(var(--drift-x, 12px), var(--drift-y, -18px)); }
+        }
+
+        /* Visible keyboard focus for accessibility */
+        a:focus-visible, button:focus-visible, input:focus-visible {
+            outline: 2px solid #c4c0ff;
+            outline-offset: 3px;
+            border-radius: 4px;
+        }
+
+        @media (min-width: 768px) {
+            .desktop-nav { display: flex; }
+            .nav-hamburger-btn { display: none; }
+        }
+    </style>
+</head>
+<body class="text-on-background font-body-md bg-background antialiased selection:bg-primary/30 selection:text-primary">
+<!-- Scroll progress indicator -->
+<div aria-hidden="true" id="scroll-progress"></div>
+
+<!-- TopAppBar / Premium Navbar -->
+<header class="fixed top-0 w-full z-50 bg-transparent backdrop-blur-xl border-b border-white/5 transition-all duration-300" id="site-header">
+<nav aria-label="Primary" class="flex justify-between items-center px-margin-mobile md:px-margin-desktop h-20 w-full max-w-container-max mx-auto">
+<a class="font-display-lg-mobile text-2xl md:text-display-lg-mobile tracking-tighter text-on-surface shrink-0" href="#home">VISIONARY</a>
+
+<!-- Desktop navigation -->
+<ul class="desktop-nav hidden items-center gap-stack-lg" role="list">
+<li><a class="nav-link active font-label-md text-label-md uppercase tracking-wider text-on-surface" data-nav-link="home" href="#home">Home</a></li>
+<li><a class="nav-link font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-on-surface transition-colors" data-nav-link="mission" href="#mission">Mission</a></li>
+<li><a class="nav-link font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-on-surface transition-colors" data-nav-link="about" href="#about">About</a></li>
+<li><a class="nav-link font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-on-surface transition-colors" data-nav-link="technology" href="#technology">Technology</a></li>
+<li><a class="nav-link font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-on-surface transition-colors" data-nav-link="showcase" href="#showcase">Showcase</a></li>
+<li><a class="nav-link font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-on-surface transition-colors" data-nav-link="achievements" href="#achievements">Achievements</a></li>
+<li><a class="nav-link font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-on-surface transition-colors" data-nav-link="contact" href="#contact">Contact</a></li>
+</ul>
+
+<div class="flex items-center gap-stack-md">
+<a class="magnetic-btn ripple hidden md:inline-block bg-gradient-to-r from-primary to-secondary text-surface-container-lowest font-label-md text-label-md uppercase tracking-wider py-2.5 px-6 rounded-full shadow-[0_0_20px_rgba(196,192,255,0.25)] hover:shadow-[0_0_28px_rgba(196,192,255,0.45)]" href="#contact">Get Started</a>
+
+<!-- Hamburger (mobile/tablet) -->
+<button aria-controls="mobile-drawer" aria-expanded="false" aria-label="Open menu" class="nav-hamburger-btn text-on-surface scale-95 active:scale-90 transition-transform p-2" id="hamburger-btn">
+<span aria-hidden="true" class="hamburger"><span></span><span></span><span></span></span>
+</button>
+</div>
+</nav>
+</header>
+
+<!-- Mobile drawer menu -->
+<div id="mobile-drawer">
+<div class="drawer-backdrop" data-drawer-close=""></div>
+<div class="drawer-panel" role="dialog" aria-label="Mobile navigation" aria-modal="true">
+<a class="nav-link font-headline-md text-headline-md text-on-surface" data-drawer-close="" data-nav-link="home" href="#home">Home</a>
+<a class="nav-link font-headline-md text-headline-md text-on-surface-variant" data-drawer-close="" data-nav-link="mission" href="#mission">Mission</a>
+<a class="nav-link font-headline-md text-headline-md text-on-surface-variant" data-drawer-close="" data-nav-link="about" href="#about">About</a>
+<a class="nav-link font-headline-md text-headline-md text-on-surface-variant" data-drawer-close="" data-nav-link="technology" href="#technology">Technology</a>
+<a class="nav-link font-headline-md text-headline-md text-on-surface-variant" data-drawer-close="" data-nav-link="showcase" href="#showcase">Showcase</a>
+<a class="nav-link font-headline-md text-headline-md text-on-surface-variant" data-drawer-close="" data-nav-link="achievements" href="#achievements">Achievements</a>
+<a class="nav-link font-headline-md text-headline-md text-on-surface-variant" data-drawer-close="" data-nav-link="contact" href="#contact">Contact</a>
+<a class="magnetic-btn ripple mt-stack-md bg-gradient-to-r from-primary to-secondary text-surface-container-lowest font-label-md text-label-md uppercase tracking-wider py-3 px-6 rounded-full text-center" data-drawer-close="" href="#contact">Get Started</a>
+</div>
+</div>
+<main class="relative min-h-screen pt-24 overflow-hidden">
+<!-- Background Spheres -->
+<div class="floating-sphere bg-primary w-[300px] h-[300px] top-[-100px] left-[-150px] parallax-layer" data-parallax-speed="0.15"></div>
+<div class="floating-sphere bg-secondary w-[400px] h-[400px] top-[800px] right-[-200px] parallax-layer" data-parallax-speed="0.25"></div>
+<div class="floating-sphere bg-tertiary w-[250px] h-[250px] top-[1800px] left-[-50px] parallax-layer" data-parallax-speed="0.2"></div>
+<div class="floating-sphere bg-primary w-[350px] h-[350px] top-[2800px] right-[-100px] parallax-layer" data-parallax-speed="0.3"></div>
+<!-- Hero Section -->
+<section aria-label="Hero" class="relative min-h-[85vh] flex flex-col justify-center px-margin-mobile z-10 animate-in-hidden mb-section-gap" id="home">
+<div class="absolute inset-0 aurora-bg parallax-layer" data-parallax-speed="0.1"></div>
+<div aria-hidden="true" class="particle w-2 h-2 top-[20%] left-[15%]" style="--drift-x:14px;--drift-y:-22px;animation-duration:6s;"></div>
+<div aria-hidden="true" class="particle w-1.5 h-1.5 top-[35%] left-[80%]" style="--drift-x:-10px;--drift-y:18px;animation-duration:8s;"></div>
+<div aria-hidden="true" class="particle w-1 h-1 top-[60%] left-[40%]" style="--drift-x:16px;--drift-y:14px;animation-duration:7s;"></div>
+<div class="parallax-layer relative z-10" data-parallax-speed="0">
+<h2 class="font-display-lg-mobile text-display-lg-mobile text-on-surface mb-stack-md leading-tight">Future<br/>Forward</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-md mb-stack-lg leading-relaxed">Experience the next generation of digital craftsmanship. A symphony of light, depth, and motion.</p>
+</div>
+<div class="flex flex-col gap-stack-sm parallax-layer relative z-20" data-parallax-speed="-0.2">
+<a class="magnetic-btn ripple bg-gradient-to-r from-primary to-secondary text-surface-container-lowest font-label-md text-label-md py-4 px-8 rounded-full shadow-[0_0_20px_rgba(196,192,255,0.3)] w-full text-center hover:opacity-90 transition-opacity" href="#mission">EXPLORE VISION</a>
+<button class="magnetic-btn ripple glass-panel text-on-surface font-label-md text-label-md py-4 px-8 rounded-full w-full text-center hover:bg-white/5 transition-colors" type="button">WATCH REEL</button>
+</div>
+<div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-50 z-20">
+<span aria-hidden="true" class="material-symbols-outlined text-on-surface">south</span>
+</div>
+</section>
+
+<div aria-hidden="true" class="section-divider">
+<svg preserveAspectRatio="none" viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg"><path d="M0,32 C360,64 1080,0 1440,32 L1440,64 L0,64 Z" fill="#13121b" opacity="0.5"></path></svg>
+</div>
+<!-- Mission Section -->
+<section aria-label="Mission" class="py-section-gap px-margin-mobile relative z-20" id="mission">
+<div class="parallax-layer" data-parallax-speed="0.1">
+<h3 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-stack-md reveal-left">Our Mission</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-stack-lg reveal-left">To redefine the boundaries of interactive media. We believe that technology should not just function, but inspire and elevate the human experience through profound design.</p>
+<div class="glass-panel rounded-xl p-stack-lg reveal-blur parallax-layer lift-card" data-parallax-speed="0.15">
+<p class="font-body-md text-body-md text-primary italic border-l-4 border-primary pl-4">"Design is not just what it looks like and feels like. Design is how it works in harmony with the cosmos."</p>
+</div>
+</div>
+</section>
+
+<div aria-hidden="true" class="section-divider">
+<svg preserveAspectRatio="none" viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg"><path d="M0,32 C360,0 1080,64 1440,32 L1440,64 L0,64 Z" fill="#1b1b24" opacity="0.4"></path></svg>
+</div>
+<!-- About / Parallax Showcase Section -->
+<section aria-label="About" class="py-section-gap px-margin-mobile relative z-20" id="about">
+<div class="glass-panel rounded-xl p-stack-lg relative overflow-hidden reveal-blur lift-card">
+<!-- Background Layer -->
+<div class="absolute inset-0 bg-surface-container-high opacity-20 parallax-layer" data-parallax-speed="0.05"></div>
+<!-- Midground Layer -->
+<div class="parallax-layer relative z-10" data-parallax-speed="0.15">
+<h3 class="font-headline-md text-headline-md text-primary mb-stack-md">Crafted with Precision</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-stack-lg">Every interaction is engineered for fluidity. We combine cutting-edge technology with high-end editorial aesthetics to create immersive journeys.</p>
+</div>
+<!-- Foreground Layer -->
+<div class="parallax-layer relative z-20 h-64 rounded-lg bg-surface-container-high flex items-center justify-center overflow-hidden border border-outline-variant/30" data-parallax-speed="0.3">
+<img alt="Abstract geometric glassmorphism artwork in violet and amber tones" class="w-full h-full object-cover opacity-80 mix-blend-screen scale-110" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmSTmLiQmwB4mRStDxpuvDKWmVZ2-IPuYW-2hOfSOTBE6QJz0lUpdiYsF6CQ9Zaagrp1aozWqF1_gAPFabloImAaDAE1dWkHlAWP_CRL8TJFUkEz9vgVwrX_pvBcBpUisn8i7cQvcF_jeCbf68OamfdKnhI7Y8zU3WrJWhfK62USyGfmkHWXPJ9kMXc9HT3wkyllJFSweOWfuTmfPZUJqhLzfirxHUWbhc6b1zt-yANs8XJcGu9ztnwNYicJVBnjUYMANjZc9Qhq0"/>
+</div>
+</div>
+</section>
+
+<div aria-hidden="true" class="section-divider">
+<svg preserveAspectRatio="none" viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg"><path d="M0,32 C360,64 1080,0 1440,32 L1440,64 L0,64 Z" fill="#13121b" opacity="0.5"></path></svg>
+</div>
+<!-- Technology Grid Section -->
+<section class="py-section-gap px-margin-mobile relative z-20">
+<div class="parallax-layer" data-parallax-speed="0.08">
+<h3 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-stack-lg animate-in-hidden">Core Stack</h3>
+<div class="grid grid-cols-1 gap-stack-md">
+<div class="glass-panel rounded-xl p-stack-lg animate-in-hidden parallax-layer" data-parallax-speed="0.12">
+<span class="material-symbols-outlined text-secondary text-4xl mb-stack-sm block">memory</span>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-2">Neural Engine</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Powered by adaptive machine learning algorithms that anticipate user intent and personalize the flow.</p>
+</div>
+<div class="glass-panel rounded-xl p-stack-lg animate-in-hidden parallax-layer" data-parallax-speed="0.18">
+<span class="material-symbols-outlined text-tertiary text-4xl mb-stack-sm block">view_in_ar</span>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-2">Spatial Rendering</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Real-time WebGL processing for cinematic visual fidelity directly in the mobile browser.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive Showcase Layers -->
+<section class="py-section-gap px-margin-mobile relative z-20 min-h-[70vh] flex items-center">
+<div class="w-full relative h-[400px]">
+<div class="absolute inset-0 aurora-bg parallax-layer opacity-50" data-parallax-speed="-0.1"></div>
+<div class="glass-panel absolute top-0 left-0 right-8 p-6 rounded-xl parallax-layer z-10" data-parallax-speed="0.1">
+<h4 class="font-label-md text-label-md text-primary tracking-widest uppercase mb-2">Layer 01</h4>
+<div class="h-24 bg-surface-container-high rounded-lg border border-white/5"></div>
+</div>
+<div class="glass-panel absolute top-20 left-4 right-4 p-6 rounded-xl parallax-layer z-20 shadow-2xl backdrop-blur-2xl bg-surface/50 border border-secondary/20" data-parallax-speed="0.25">
+<h4 class="font-label-md text-label-md text-secondary tracking-widest uppercase mb-2">Layer 02</h4>
+<div class="h-24 bg-surface-container-high/50 rounded-lg border border-white/10 flex items-center justify-center">
+<span class="font-body-md text-on-surface-variant">Depth Perception</span>
+</div>
+</div>
+<div class="glass-panel absolute top-40 left-8 right-0 p-6 rounded-xl parallax-layer z-30 shadow-2xl backdrop-blur-3xl bg-surface/70 border border-primary/30" data-parallax-speed="0.4">
+<h4 class="font-label-md text-label-md text-on-surface tracking-widest uppercase mb-2">Layer 03</h4>
+<div class="h-24 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-lg border border-white/20"></div>
+</div>
+</div>
+</section>
+<!-- Achievements Section -->
+<section class="py-section-gap px-margin-mobile relative z-20">
+<div class="glass-panel rounded-xl p-stack-lg animate-in-hidden parallax-layer" data-parallax-speed="0.05">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-stack-lg text-center">Milestones</h3>
+<div class="grid grid-cols-2 gap-stack-lg text-center">
+<div>
+<div class="font-display-lg text-4xl font-bold text-primary mb-2">99%</div>
+<div class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Uptime</div>
+</div>
+<div>
+<div class="font-display-lg text-4xl font-bold text-secondary mb-2">10M+</div>
+<div class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Interactions</div>
+</div>
+<div class="col-span-2 mt-stack-sm border-t border-white/10 pt-stack-md">
+<div class="font-display-lg text-4xl font-bold text-tertiary mb-2">15ms</div>
+<div class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Render Latency</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Contact Form Section -->
+<section class="py-section-gap px-margin-mobile relative z-20">
+<div class="glass-panel rounded-xl p-stack-lg animate-in-hidden parallax-layer" data-parallax-speed="0.1">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-stack-lg">Initiate Sequence</h3>
+<form class="flex flex-col gap-stack-md">
+<div class="relative">
+<input class="w-full bg-transparent border-0 border-b border-outline-variant/50 focus:border-primary focus:ring-0 text-on-surface font-body-md text-body-md py-2 px-0 transition-colors" id="name" placeholder=" " required="" type="text"/>
+<label class="absolute left-0 top-2 text-on-surface-variant font-body-md text-body-md transition-all pointer-events-none -translate-y-6 scale-75 origin-left" for="name">Identifier</label>
+</div>
+<div class="relative mt-4">
+<input class="w-full bg-transparent border-0 border-b border-outline-variant/50 focus:border-primary focus:ring-0 text-on-surface font-body-md text-body-md py-2 px-0 transition-colors" id="email" placeholder=" " required="" type="email"/>
+<label class="absolute left-0 top-2 text-on-surface-variant font-body-md text-body-md transition-all pointer-events-none -translate-y-6 scale-75 origin-left" for="email">Comms Link</label>
+</div>
+<button class="mt-stack-lg bg-primary text-on-primary font-label-md text-label-md py-4 rounded-full shadow-[0_0_15px_rgba(196,192,255,0.2)] hover:shadow-[0_0_25px_rgba(196,192,255,0.4)] transition-shadow" type="submit">TRANSMIT</button>
+</form>
+</div>
+</section>
+</main>
+<!-- Footer Shared Component -->
+<footer class="w-full py-section-gap bg-surface-container-lowest bg-gradient-to-t from-primary/10 to-transparent flat relative z-20">
+<div class="flex flex-col items-center justify-center gap-stack-md px-margin-mobile text-center">
+<h2 class="font-display-lg-mobile text-display-lg-mobile text-on-surface mb-stack-sm">VISIONARY</h2>
+<div class="flex flex-col gap-stack-sm w-full border-t border-outline-variant/20 pt-stack-md">
+<a class="font-body-md text-body-md text-on-surface-variant opacity-80 hover:opacity-100 hover:text-secondary transition-all" href="#">Privacy Policy</a>
+<a class="font-body-md text-body-md text-on-surface-variant opacity-80 hover:opacity-100 hover:text-secondary transition-all" href="#">Terms of Service</a>
+<a class="font-body-md text-body-md text-on-surface-variant opacity-80 hover:opacity-100 hover:text-secondary transition-all" href="#">Cookie Policy</a>
+</div>
+<p class="font-body-md text-body-md text-tertiary mt-stack-md text-xs">© 2024 VISIONARY. ALL RIGHTS RESERVED.</p>
+</div>
+</footer>
+<script>
+        // High-Performance Parallax Engine
+        const root = document.documentElement;
+        let lastScrollY = window.scrollY;
+        let ticking = false;
+
+        // Initialize parallax elements
+        document.querySelectorAll('[data-parallax-speed]').forEach(el => {
+            const speed = el.getAttribute('data-parallax-speed');
+            el.style.setProperty('--parallax-speed', speed);
+        });
+
+        const updateScroll = () => {
+            root.style.setProperty('--scroll-y', `${lastScrollY}px`);
+            
+            // Header opacity adjustment
+            const header = document.querySelector('header');
+            if (lastScrollY > 50) {
+                header.classList.add('bg-surface/60');
+                header.classList.remove('bg-transparent');
+            } else {
+                header.classList.remove('bg-surface/60');
+                header.classList.add('bg-transparent');
+            }
+            
+            ticking = false;
+        };
+
+        window.addEventListener('scroll', () => {
+            lastScrollY = window.scrollY;
+            if (!ticking) {
+                window.requestAnimationFrame(updateScroll);
+                ticking = true;
+            }
+        }, { passive: true });
+
+        // Initial set
+        updateScroll();
+
+        // Entrance Animations using IntersectionObserver
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-in-hidden').forEach(el => {
+            observer.observe(el);
+            // Trigger immediately if already in view on load
+            if (el.getBoundingClientRect().top < window.innerHeight) {
+                 el.classList.add('animate-in-visible');
+            }
+        });
+
+        // Floating label behavior for minimalist inputs
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', (e) => {
+                e.target.nextElementSibling.classList.add('-translate-y-6', 'scale-75', 'text-primary');
+            });
+            input.addEventListener('blur', (e) => {
+                if(!e.target.value) {
+                    e.target.nextElementSibling.classList.remove('-translate-y-6', 'scale-75', 'text-primary');
+                } else {
+                     e.target.nextElementSibling.classList.remove('text-primary');
+                }
+            });
+            // Initial check
+            if(input.value) {
+                 input.nextElementSibling.classList.add('-translate-y-6', 'scale-75');
+            }
+        });
+    </script>
+</body></html>
